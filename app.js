@@ -41,16 +41,27 @@ var requestData = function(){
     return new Promise((resolve, reject) => {
         http.get(apiUrls[endpoint], (res) => {
             let { statusCode } = res; // destructing the res object to retrieve attribute 'statusCode' of http.get
-        
-            if (statusCode !== 200){
-                console.error(`Unable to load data at endpoint ${apiUrls[endpoint]}`);
-                reject();
+            let error;
+
+            if (statusCode == 200){
+                resolve(res);
             }else{
-                console.log(`status: ${statusCode}`);
-                resolve(() => {
-                    console.log("in resolve")
-                });
+                error = new Error(`Request failed. \nStatus code: ${statusCode}`)
+                // console.error(`Unable to load data at endpoint ${apiUrls[endpoint]}`);
+                reject();
             }
+
+
+            if(error){
+                console.log(error.message);
+                return;
+            }
+
+            // receiving the data 
+            let rawData;
+            res.on("data", chunk => {rawData += chunk})
+            console.log(`data`, rawData);
+
         })        
     });
 }
@@ -58,7 +69,9 @@ var requestData = function(){
 
 
 requestData()
-    .then()
+    .then((data) => {
+        console.log(data);
+    })
     .catch((err) => {
             console.info("here we manage the following error", err);
         }
