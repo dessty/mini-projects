@@ -31,7 +31,3 @@ let getData = () => {
 
 getData();
 
-function processData(data){
-    document.getElementById("")
-}
-
